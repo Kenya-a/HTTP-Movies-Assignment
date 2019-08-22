@@ -1,6 +1,6 @@
 import React from 'react';
 
-const MovieCard = props => {
+const MovieCard = (props, {setPostEdit, deletePost, post}) => {
   const { title, director, metascore, stars } = props.movie;
   return (
     <div className="movie-card">
@@ -18,6 +18,10 @@ const MovieCard = props => {
           {star}
         </div>
       ))}
+ 
+      <button onClick={() => setPostEdit(post)}>Edit</button>
+
+      <button onClick={() => deletePost(post.id)}>Delete</button> 
     </div>
   );
 };
