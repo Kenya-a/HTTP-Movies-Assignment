@@ -75,3 +75,19 @@ body {
   color: red;
   text-align: center;
 }
+
+.add-movie{
+  border: 3px solid black;
+  margin-top: 30px;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+}
+
+.update-form{
+  border: 3px solid black;
+  margin-top: 30px;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+}

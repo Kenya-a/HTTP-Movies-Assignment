@@ -1,79 +1,81 @@
-import React, {useState, useEffect} from 'react';
 
-import axios from 'axios';
+import React, { useState } from 'react'
+import axios from 'axios'
 
-const MovieForm = ({list, setList, postEdit, setPostEdit, editPost}) => {
-    const [post, setPost] = useState({title: '', director: '', metascore: '', actors: ''})
+ const MovieForm = (props) => {
 
-    useEffect (() => {
-        if (postEdit) {
-            setPost(postEdit)
-        }
-    }, [postEdit])
+   const id = props.match.params.id
+  // console.log('id', id);
 
-    const handleChange = e => {
-        const updatePost = {
-            ...post, 
-            [e.target.name]: e.target.value
-        };
-        setPost(updatePost)
-    };
+   const [movieUpdate, setMovieUpdate] = useState({
+    id: id,
+    title: "",
+    director: "",
+    metascore:"",
 
-    const handleSubmit = e => {
-        e.preventDefault();
-        if(postEdit) {
-            editPost(post);
-            setPostEdit(null);
-        }else if (
-            post.title !== '' &&
-            post.director !== '' &&
-            post.metascore !== '' &&
-            post.actors !== ''
-        ) {
-            const sendPost = () => {
-                axios.post(`http://localhost:5000/api/movies`, {
-                    title: post.title,
-                    director: post.director,
-                    metascore: post.metascore,
-                    actors: post.actors
-                })
-                .then(response => {
-                    console.log(response)
-                    setList([response.data, ...list])
-                })
-                .catch(error => {
-                    console.log(error)
-                })
-            }
-            sendPost();
-        }
-    }
-    return(
-        <form onSubmit = {handleSubmit}>
-            <legend>{postEdit ? 'Edit Movie': 'Edit Movie'}</legend>
-            <label> 
-                Title:{" "}
-                <input type = 'text' name = 'title' value = {post.title} onChange = {handleChange}/>
-            </label>
+   });
+  const [movieStars, setMovieStars] = useState ({
+    stars: []
+  })
 
-            <label>
-                Director:{" "}
-                <input type = 'text' name = 'director' value = {post.director} onChange = {handleChange}/>
-            </label>
+   const handleChange = (e) => {
+    setMovieUpdate({...movieUpdate, [e.target.name]: e.target.value})
+    //console.log('movieUpdate', movieUpdate);
+  }
 
-            <label>
-                Metascore:{" "}
-                <input type = 'text' name = 'metascore' value = {post.metascore} onChange = {handleChange}/>
-            </label>
+   const handleStars = (e) => {
+    setMovieStars({...movieStars, [e.target.name]: [e.target.value]})
+    console.log('movieStars', movieStars);
+  }
 
-            <label>
-                Actors:{" "}
-                <input type = 'text' name = 'actors' value = {post.actors} onChange = {handleChange}/> 
-            </label>
 
-            <button type = 'submit' value = 'submit' onSubmit ={handleSubmit}>Submit</button>
-        </form>
-    );
-}
+   const submitMovie = (e) => {
+    e.preventDefault();
+    console.log('movieUpdate', movieUpdate);
+    console.log('movieStars', movieStars);
 
-export default MovieForm;
+     const newMovie = {...movieUpdate, ...movieStars}
+
+     axios
+      .put(`http://localhost:5000/api/movies/${id}`, newMovie)
+      .catch(error => console.log(error.response))
+  }
+
+   return(
+    <div className="movie-form">
+      <form className="update-form">
+      <p>Update Movie Form</p>
+        <label>Movie Name</label>
+        <input
+          type="text"
+          name="title"
+          value={movieUpdate.title}
+          onChange={handleChange}/>
+
+         <label>Movie Director</label>
+        <input
+          type="text"
+          name="director"
+          value={movieUpdate.director}
+          onChange={handleChange}/>
+
+         <label>Movie Metascore</label>
+        <input
+          type="text"
+          name="metascore"
+          value={movieUpdate.metascore}
+          onChange={handleChange}/>
+
+         <label>Actors</label>
+        <input type="text"
+          name="stars"
+          value={movieStars.stars}
+          onChange={handleStars}/>
+
+
+         <button type="button" onClick={submitMovie}>Submit Movie!</button>
+      </form>
+    </div>
+    )
+  }
+export default MovieForm

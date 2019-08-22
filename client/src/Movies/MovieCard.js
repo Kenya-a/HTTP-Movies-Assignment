@@ -1,7 +1,22 @@
 import React from 'react';
 
-const MovieCard = (props, {setPostEdit, deletePost, post}) => {
-  const { title, director, metascore, stars } = props.movie;
+import axios from 'axios'
+import { Link } from "react-router-dom";
+
+const MovieCard = props => {
+  const { title, director, metascore, stars, id } = props.movie;
+
+  const deleteMovie = (e) => {
+    e.preventDefault();
+    axios
+      .delete(`http://localhost:5000/api/movies/${id}`)
+      .then(res => {
+        console.log(res);
+      })
+      .catch(err => console.log(err.response))
+  }
+
+
   return (
     <div className="movie-card">
       <h2>{title}</h2>
@@ -19,9 +34,14 @@ const MovieCard = (props, {setPostEdit, deletePost, post}) => {
         </div>
       ))}
  
-      <button onClick={() => setPostEdit(post)}>Edit</button>
-
-      <button onClick={() => deletePost(post.id)}>Delete</button> 
+      <div>
+      <div>
+        <Link to={`/update-movie/${id}`}>
+        <button type="button">Edit</button>
+        </Link>
+      </div>
+      <button type="button" onClick={deleteMovie}>Delete</button>
+      </div>
     </div>
   );
 };
